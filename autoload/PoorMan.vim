@@ -64,8 +64,6 @@ func! s:callCmd(dict, parent)
             continue
         endif
 
-        call add(keys, key)
-        
         let conf = a:dict[key]
         let str = "&" . key
         if has_key(conf, '_cmds')
@@ -77,6 +75,8 @@ func! s:callCmd(dict, parent)
         elseif has_key(conf, '_name')
             let str .= "+" . conf._name
         endif
+
+        call add(keys, key)
         call add(choices, str)
     endfor
 
@@ -104,6 +104,7 @@ func! s:callCmd(dict, parent)
 endfunc
 
 func! PoorMan#Init(groups, cmds)
+    let g:confirm_commands = {}
     for grp in a:groups 
         let path = split(grp[0], '\zs')
         call s:addGroup(s:confirm_commands, grp[1], path)
