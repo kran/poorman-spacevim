@@ -108,6 +108,6 @@ func! PoorMan#Init(groups, cmds)
 endfunc
 
 func! PoorMan#Trigger()
-    call s:callCmd(s:confirm_commands, "")
+    call s:callCmd(s:confirm_commands, "PoorMan")
 endfunc
 
