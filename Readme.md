@@ -3,6 +3,10 @@
 This simple plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But my laptop is too weak to run spacevim smoothly. 
 this plugin doesn't change the way you using vim.
 
+## Screenshot
+
+![poorman](https://raw.githubusercontent.com/kran/poorman-spacevim/master/poorman-vim.gif)
+
 ## Usage
 
 ```
