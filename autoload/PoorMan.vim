@@ -52,10 +52,6 @@ func! s:selectCommand(cmds)
 endfunc
 
 func! s:callCmd(dict, parent)
-    if has_key(a:dict, '_cmds')
-        return s:runCommand(s:selectCommand(a:dict._cmds))
-    endif
-
     let choices = []
     let keys = []
     let itkeys = sort(keys(a:dict))
@@ -73,7 +69,7 @@ func! s:callCmd(dict, parent)
             endif
             let str .= cmd[0]
         elseif has_key(conf, '_name')
-            let str .= "+" . conf._name
+            let str .= conf._name 
         endif
 
         call add(keys, key)
@@ -86,11 +82,7 @@ func! s:callCmd(dict, parent)
         return
     endif
 
-    let label = "Select:"
-    if len(a:parent) > 0 
-        let label = a:parent . ':'
-    endif
-    let c = confirm(label, choiceString) - 1
+    let c = confirm(a:parent . ":", choiceString) - 1
     if c == -1
         return
     endif
