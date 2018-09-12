@@ -1,7 +1,7 @@
 ## About
 
-This simple plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But my laptop is so weak and can't run spacevim smoothly. 
-if you have a good enough machine, I suggest you trying spacevim. It give you more than just group commands.
+This simple plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But my laptop is too weak to run spacevim smoothly. 
+this plugin doesn't change the way you using vim.
 
 ## Usage
 

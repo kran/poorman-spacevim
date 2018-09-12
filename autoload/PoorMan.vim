@@ -56,7 +56,7 @@ func! s:callCmd(dict, parent)
     let keys = []
     let itkeys = sort(keys(a:dict))
     for key in itkeys
-        if key[0] == '_'
+        if len(key) > 1
             continue
         endif
 
