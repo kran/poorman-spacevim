@@ -96,7 +96,7 @@ func! s:callCmd(dict, parent)
 endfunc
 
 func! PoorMan#Init(groups, cmds)
-    let g:confirm_commands = {}
+    let s:confirm_commands = {}
     for grp in a:groups 
         let path = split(grp[0], '\zs')
         call s:addGroup(s:confirm_commands, grp[1], path)
