@@ -1,4 +1,3 @@
-** If I knew [vim-which-key](https://github.com/liuchengxu/vim-which-key), this plugin should not exist. - 2018/9/13 **
 
 ## About
 
@@ -67,3 +66,8 @@ nmap <silent> <c-n> :call PoorMan#Trigger()<cr>
 imap <silent> <c-n> :call PoorMan#Trigger()<cr>
 
 ```
+
+## Similar plugins 
+
+- [vim-which-key](https://github.com/liuchengxu/vim-which-key), much better UI
+
