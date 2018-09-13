@@ -1,4 +1,4 @@
-** If I knew [vim-which-key](https://github.com/liuchengxu/vim-which-key), this plugin should not exist. **
+** If I knew [vim-which-key](https://github.com/liuchengxu/vim-which-key), this plugin should not exist. - 2018/9/13 **
 
 ## About
 
