@@ -1,7 +1,8 @@
 ## About
 
-This simple plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But my laptop is too weak to run spacevim smoothly. 
-this plugin doesn't change the way you using vim.
+This tiny plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But not all the other features.
+
+this plugin does *not* change the way you using vim.
 
 ## Screenshot
 
@@ -58,8 +59,9 @@ let s:commands = [
 " now register groups and commands to PoorMan
 call PoorMan#Init(s:groups, s:commands)
 
-" define you key bindings
+" define your key bindings
 nmap <silent> <space> :call PoorMan#Trigger()<cr>
-map <silent> <c-n> :call PoorMan#Trigger()<cr>
+nmap <silent> <c-n> :call PoorMan#Trigger()<cr>
+imap <silent> <c-n> :call PoorMan#Trigger()<cr>
 
 ```
