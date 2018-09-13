@@ -1,3 +1,5 @@
+** If I knew [vim-which-key](https://github.com/liuchengxu/vim-which-key), this plugin should not exist. **
+
 ## About
 
 This tiny plugin is inspired by [SpaceVim](https://spacevim.org/), I like the idea of using just one key to group commands. But not all the other features.
