@@ -24,7 +24,7 @@ func! s:selectCommand(cmds)
 endfunc
 
 
-func s:cmdFilter(winid, key)
+func PoorManCmdFilter(winid, key)
     if has_key(s:pcg, a:key) 
         call popup_close(a:winid)
         let sel = s:pcg[a:key]
@@ -55,7 +55,7 @@ func! s:callCmd(dict)
             endif
         endif
     endfor
-    call popup_menu(choices, #{filter: 's:cmdFilter'})
+    call popup_menu(choices, #{filter: 'PoorManCmdFilter'})
 endfunc
 
 func! PoorMan#Trigger()
