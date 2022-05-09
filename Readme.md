@@ -12,62 +12,30 @@ this plugin does *not* change the way you using vim.
 ## Usage
 
 ```
-" define groups
-" format: [$key, $name]
-let s:groups = [
-    \["a", "application"],
-    \["b", "buffer"],
-    \["s", "cscope"],
-    \["p", "project"],
-    \["f", "files"],
-    \["ff", "formater"],
-    \["t", "toggle"],
-    \["j", "jump"],
-\]
-
-
-" then define commands under groups
-" format: [$key, $name, $command, $filetype]
-" commands will show in all buffer when filetype with * 
-" others will show on matching the buffer filetype
-let s:commands = [
-    \["sa", "connect source", "cs add cscope.out", "*"],
-    \["ss", "find current", "call CScopeConfirm(expand('<cword>'))", "*"],
-    \["si", "input", "call CScopeConfirm('')", "*"],
-    \["ffj", "json", "%!python -m json.tool", "*"],
-    \["1", "tab1", "normal 1gt", "*"],
-    \["2", "tab2", "normal 2gt", "*"],
-    \["3", "tab3", "normal 3gt", "*"],
-    \["4", "tab4", "normal 4gt", "*"],
-    \["0", "tablast", "tablast", "*"],
-    \["r", "quickrun", "!php %", "php"],
-    \["r", "quickrun", "so %", "vim"],
-    \["r", "quickrun", "!go run %", "go"],
-    \["r", "quickrun", "!cargo run", "rust"],
-    \["c", "change dir", "lcd %:p:h", "*"],
-    \["d", "nerdtree", "NERDTreeToggle", "*"],
-    \["bt", "buffer tags", "Denite outline", "*"],
-    \["g", "grep", "Denite grep -ignorecase", "*"],
-    \["pt", "tags", "Denite tag", "*"],
-    \["tn", "line number", "set nu!", "*"],
-    \["tp", "paste", "set paste!", "*"],
-    \["th", "hightlight", "call ToggleHighlight()","*"],
-    \["w", "easymotion", "call EasyMotion#WB(0,2)", "*"],
-    \["jd", "goto define", "normal \<plug>DeopleteRustGoToDefinitionDefault", "rust"],
-    \["jh", "show help", "normal \<plug>DeopleteRustShowDocumentation", "rust"],
-\]
-
-" now register groups and commands to PoorMan
-call PoorMan#Init(s:groups, s:commands)
+let g:poorman_spacevim_cmds = #{
+    \f: #{name: '文件', children: #{
+        \m: #{name: "mru",      cmd: #{_: "History"}},
+        \s: #{name: "save",     cmd: #{_: "w"}},
+        \v: #{name: "vimrc",     cmd: #{_: "e ~/.vimrc"}},
+        \a: #{name: "save all", cmd: #{_: "wa"}} }
+    \},
+    \0: #{name: "上次标签", cmd: #{_: "tablast"}},
+    \1: #{name: "标签1",    cmd: #{_: "normal 1gt"}},
+    \2: #{name: "标签2",    cmd: #{_: "normal 2gt"}},
+    \3: #{name: "标签3",    cmd: #{_: "normal 3gt"}},
+    \4: #{name: "标签4",    cmd: #{_: "normal 4gt"}},
+    \r: #{name: "执行",     cmd: #{vim: "so %",       php: "!php %", go: "!go run %", lua: "!lua %"}},
+    \n: #{name: "切换行号",     cmd: #{_: "set nu!"}},
+    \p: #{name: "粘贴模式",     cmd: #{_: "set paste!"}},
+    \d: #{name: "目录浏览器",     cmd: #{_: "NERDtreeToggle"}},
+    \w: #{name: "字符定位",     cmd: #{_: "call EasyMotion#WB(0,2)"}},
+    \c: #{name: "切换到当前目录",     cmd: #{_: "lcd %:p:h"}},
+    \b: #{name: "Buffers",     cmd: #{_: "Buffers"}},
+    \t: #{name: "Tags",     cmd: #{_: "Tags"}},
+\}
 
 " define your key bindings
 nmap <silent> <space> :call PoorMan#Trigger()<cr>
-nmap <silent> <c-n> :call PoorMan#Trigger()<cr>
-imap <silent> <c-n> :call PoorMan#Trigger()<cr>
+
 
 ```
-
-## Similar plugins 
-
-- [vim-which-key](https://github.com/liuchengxu/vim-which-key), much better UI
-
