@@ -3,111 +3,61 @@ if exists("g:loaded_poorman_spacevim")
 endif
 let g:loaded_poorman_spacevim = "v1"
 
-let s:confirm_commands = {}
-
-func! s:addGroup(list, name, path)
-    if len(a:path) == 0 
-        let a:list._name = a:name
-    else
-        if !has_key(a:list, a:path[0])
-            let a:list[a:path[0]] = {}
-        endif
-        call s:addGroup(a:list[a:path[0]], a:name, a:path[1:])
-    endif
-endfunc
-
-
-func! s:addCommand(list, name, path, cmd, ft)
-    if len(a:path) == 1
-        if !has_key(a:list, a:path[0])
-            let a:list[a:path[0]] = {'_cmds': {}}
-        endif
-        let a:list[a:path[0]]._cmds[a:ft] = [a:name, a:cmd]
-    else
-        if !has_key(a:list, a:path[0])
-            echoerr "Group not found: " . a:path[0]
-            return
-        endif
-        call s:addCommand(a:list[a:path[0]], a:name, a:path[1:], a:cmd, a:ft)
-    endif
-endfunc
-
+let s:pcg = v:null
 
 func! s:runCommand(cmd)
-    if len(a:cmd) == 0
+    if a:cmd is v:null
         return
     endif
-    execute a:cmd[1]
+    execute a:cmd
 endfunc
 
 func! s:selectCommand(cmds)
     let ft = &ft
     if has_key(a:cmds, ft)
         return a:cmds[ft]
-    elseif has_key(a:cmds, "*")
-        return a:cmds["*"]
+    elseif has_key(a:cmds, "_")
+        return a:cmds["_"]
     else
-        return []
+        return v:null
     endif
 endfunc
 
-func! s:callCmd(dict, parent)
+
+func s:cmdFilter(winid, key)
+    if has_key(s:pcg, a:key) 
+        call popup_close(a:winid)
+        let sel = s:pcg[a:key]
+        if has_key(sel, 'children')
+            call s:callCmd(sel.children)
+        else
+            call s:runCommand(s:selectCommand(sel.cmd))
+        endif
+        return 1
+    endif
+
+    return popup_filter_menu(a:winid, a:key)
+endfunc
+
+func! s:callCmd(dict)
+    let s:pcg = a:dict
     let choices = []
-    let keys = []
-    let itkeys = sort(keys(a:dict))
-    for key in itkeys
-        if len(key) > 1
-            continue
-        endif
-
-        let conf = a:dict[key]
-        let str = "&" . key
-        if has_key(conf, '_cmds')
-            let cmd = s:selectCommand(conf._cmds)
-            if len(cmd) == 0
-                continue
+    let maxlen = 0
+    for [k, it] in items(a:dict)
+        let choice = '['.k. ']'.it.name
+        if has_key(it, 'children')
+            let choice .= ' →'
+            call add(choices, choice)
+        else
+            let ft = &ft
+            if has_key(it.cmd, '_') || has_key(it.cmd, ft)
+                call add(choices, choice)
             endif
-            let str .= cmd[0]
-        elseif has_key(conf, '_name')
-            let str .= conf._name 
         endif
-
-        call add(keys, key)
-        call add(choices, str)
     endfor
-
-    let choiceString = join(choices, "\n")
-    if len(choiceString) == 0
-        echo "No command!"
-        return
-    endif
-
-    let c = confirm(a:parent . ":", choiceString) - 1
-    if c == -1
-        return
-    endif
-
-    redraw
-    if !has_key(a:dict[keys[c]], '_cmds')
-        call s:callCmd(a:dict[keys[c]], a:dict[keys[c]]._name)
-    else
-        call s:runCommand(s:selectCommand(a:dict[keys[c]]._cmds))
-    endif
-endfunc
-
-func! PoorMan#Init(groups, cmds)
-    let s:confirm_commands = {}
-    for grp in a:groups 
-        let path = split(grp[0], '\zs')
-        call s:addGroup(s:confirm_commands, grp[1], path)
-    endfor
-    for cmd in a:cmds
-        let path = split(cmd[0], '\zs')
-        call s:addCommand(s:confirm_commands, cmd[1], path, cmd[2], cmd[3])
-    endfor
+    call popup_menu(choices, #{filter: 's:cmdFilter'})
 endfunc
 
 func! PoorMan#Trigger()
-    call s:callCmd(s:confirm_commands, "PoorMan")
+    call s:callCmd(g:poorman_spacevim_cmds)
 endfunc
-
