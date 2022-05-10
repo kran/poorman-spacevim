@@ -1,11 +1,13 @@
 if exists("g:loaded_poorman_spacevim") 
- finish
+    finish
 endif
+
+
 let g:loaded_poorman_spacevim = "v1"
+let s:menu = v:null
+let s:menu_keys_sorted = []
 
-let s:pcg = v:null
-
-func! s:runCommand(cmd)
+func! s:executeCommand(cmd)
     if a:cmd is v:null
         return
     endif
@@ -23,41 +25,57 @@ func! s:selectCommand(cmds)
     endif
 endfunc
 
+func! s:triggerMenuItem(sel)
+    if has_key(a:sel, 'children')
+        call s:popupMenu(a:sel.children)
+    else
+        call s:executeCommand(s:selectCommand(a:sel.cmd))
+    endif
+endfunc
 
-func PoorManCmdFilter(winid, key)
-    if has_key(s:pcg, a:key) 
-        call popup_close(a:winid)
-        let sel = s:pcg[a:key]
-        if has_key(sel, 'children')
-            call s:callCmd(sel.children)
-        else
-            call s:runCommand(s:selectCommand(sel.cmd))
-        endif
+
+func PoorManMenuFilter(winid, key)
+    if has_key(s:menu, a:key) 
+        call popup_close(a:winid, -2)
+        let sel = s:menu[a:key]
+        call s:triggerMenuItem(sel)
         return 1
     endif
 
     return popup_filter_menu(a:winid, a:key)
 endfunc
 
-func! s:callCmd(dict)
-    let s:pcg = a:dict
+func PoorManMenuCallback(winid, id)
+    if a:id > 0 
+        let sel = s:menu[s:menu_keys_sorted[a:id-1]]
+        call s:triggerMenuItem(sel)
+    endif
+endfunc
+
+func! s:popupMenu(dict)
+    let s:menu = a:dict
+    let s:menu_keys_sorted = []
+    let keys_sorted = sort(keys(a:dict))
     let choices = []
     let maxlen = 0
-    for [k, it] in items(a:dict)
+    for k in keys_sorted
+        let it = a:dict[k]
         let choice = '['.k. ']'.it.name
         if has_key(it, 'children')
-            let choice .= ' →'
+            let choice .= ' ▼' 
             call add(choices, choice)
+            call add(s:menu_keys_sorted, k)
         else
             let ft = &ft
             if has_key(it.cmd, '_') || has_key(it.cmd, ft)
                 call add(choices, choice)
+                call add(s:menu_keys_sorted, k)
             endif
         endif
     endfor
-    call popup_menu(choices, #{filter: 'PoorManCmdFilter'})
+    let winid = popup_menu(choices, #{filter: 'PoorManMenuFilter', callback: 'PoorManMenuCallback'})
 endfunc
 
 func! PoorMan#Trigger()
-    call s:callCmd(g:poorman_spacevim_cmds)
+    call s:popupMenu(g:poorman_spacevim_cmds)
 endfunc
